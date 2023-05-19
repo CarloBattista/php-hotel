@@ -52,6 +52,23 @@ $hotels = [
 // }
 
 
+// Filtra gli hotel in base alla disponibilità di parcheggio
+if (isset($_GET['parking']) && $_GET['parking'] === 'yes') {
+    $filteredHotels = array_filter($hotels, function ($hotel) {
+        return $hotel['parking'] === true;
+    });
+} else {
+    $filteredHotels = $hotels;
+}
+
+// Filtra gli hotel in base al rating del hotel
+if (isset($_GET['rating'])) {
+    $minRating = intval($_GET['rating']);
+    $filteredHotels = array_filter($filteredHotels, function ($hotel) use ($minRating) {
+        return $hotel['vote'] >= $minRating;
+    });
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -68,6 +85,21 @@ $hotels = [
 <body>
 
     <div class="container mt-5 mb-5">
+        <form method="GET" action="">
+            <div class="container">
+                <label>
+                    <!-- Valore checkbox preimpostato su yes, "yes" = true. Questa funzione permette di mantenere  il suo stato da "selezionato/ e non" anche quando la pagina viene aggiornata -->
+                    <input type="checkbox" name="parking" value="yes" <?php if (isset($_GET['parking']) && $_GET['parking'] === 'yes') echo 'checked'; ?>> 
+                    Filter by Parking
+                </label>
+            </div>
+            <div class="container mt-3 mb-3">
+                <label for="rating">Minimum Rating:</label>
+                <!-- Pure qui il valore scritto rimane anche quando la pagina verrà ricaricata -->
+                <input type="number" name="rating" id="rating" value="<?php echo isset($_GET['rating']) ? $_GET['rating'] : ''; ?>">
+                <button type="submit">Filter</button>
+            </div>
+        </form>
         <table class="table table-striped-columns">
             <thead>
                 <tr>
@@ -79,13 +111,14 @@ $hotels = [
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($hotels as $hotel) : ?>
+                <!-- Ciclo tramite forEach e gli inserisco dentro la tabella -->
+                <?php foreach ($filteredHotels as $index => $hotel) : ?>
                     <tr>
                         <td><?php echo $hotel['name']; ?></td>
                         <td><?php echo $hotel['description']; ?></td>
                         <td><?php echo $hotel['parking'] ? 'Yes' : 'No'; ?></td>
                         <td><?php echo $hotel['vote']; ?></td>
-                        <td><?php echo $hotel['distance_to_center'] . " km"; ?></td>
+                        <td><?php echo $hotel['distance_to_center']; ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
