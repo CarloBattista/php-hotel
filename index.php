@@ -118,7 +118,7 @@ if (isset($_GET['rating'])) {
                         <td><?php echo $hotel['description']; ?></td>
                         <td><?php echo $hotel['parking'] ? 'Yes' : 'No'; ?></td>
                         <td><?php echo $hotel['vote']; ?></td>
-                        <td><?php echo $hotel['distance_to_center']; ?></td>
+                        <td><?php echo $hotel['distance_to_center'] . " km"; ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
